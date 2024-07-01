@@ -1,0 +1,136 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+enum VoteType {
+  UP
+  DOWN
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model User {
+  id            String  @id @default(cuid())
+  name          String?
+  email         String? @unique
+  emailVerified Boolean @default(false)
+  password      String?
+  provider      String
+
+  bio String?
+
+  createdAt     DateTime       @default(now())
+  createdGroups Group[]        @relation("CreatedBy")
+  subscriptions Subscription[]
+  votes         Vote[]
+  role          Role           @default(USER)
+  username      String?        @unique
+  image         String?
+  sessions      Session[]
+  posts         Post[]
+  comments      Comment[]
+  commentVotes  CommentVote[]
+}
+
+model Group {
+  id          String         @id @default(cuid())
+  name        String         @unique
+  public      Boolean        @default(false)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  posts       Post[]
+  creatorId   String?
+  Creator     User?          @relation("CreatedBy", fields: [creatorId], references: [id])
+  subscribers Subscription[]
+
+  @@index([name])
+  @@index([creatorId])
+}
+
+model Subscription {
+  user    User   @relation(fields: [userId], references: [id])
+  userId  String
+  group   Group  @relation(fields: [groupId], references: [id])
+  groupId String
+
+  @@id([userId, groupId])
+  @@index([groupId])
+}
+
+model Post {
+  id        String    @id @default(cuid())
+  title     String
+  content   Json?
+  public    Boolean   @default(false)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  author    User      @relation(fields: [authorId], references: [id])
+  authorId  String
+  group     Group     @relation(fields: [groupId], references: [id])
+  groupId   String
+  comments  Comment[]
+  votes     Vote[]
+
+  @@index([authorId])
+  @@index([groupId])
+}
+
+model Comment {
+  id        String        @id @default(cuid())
+  text      String
+  createdAt DateTime      @default(now())
+  author    User          @relation(fields: [authorId], references: [id])
+  authorId  String
+  post      Post          @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId    String
+  replyToId String?
+  replyTo   Comment?      @relation("ReplyTo", fields: [replyToId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  replies   Comment[]     @relation("ReplyTo")
+  votes     CommentVote[]
+  commentId String?
+
+  @@index([authorId])
+  @@index([postId])
+  @@index([replyToId])
+}
+
+model Vote {
+  user   User     @relation(fields: [userId], references: [id])
+  userId String
+  post   Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId String
+  type   VoteType
+
+  @@id([userId, postId])
+  @@index([postId])
+}
+
+model CommentVote {
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  comment   Comment  @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  commentId String
+  type      VoteType
+
+  @@id([userId, commentId])
+  @@index([commentId])
+}
