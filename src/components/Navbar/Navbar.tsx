@@ -7,7 +7,7 @@ import { Button, buttonVariants } from "../ui/button";
 const Navbar = () => {
   const { data: session } = useSession();
   return (
-    <nav className="fixed top-0 inset-x-0 h-fit bg-zinc-100 border-b border-zinc-300 z-[10] py-2">
+    <nav className="fixed top-0 inset-x-0 h-fit bg-zinc-100 border-b border-zinc-300 z-[10] py-2 dark:bg-zinc-900 dark:border-zinc-800">
       <div className="container max-w-7xl h-full mx-auto flex items-center justify-between gap-2">
         {/* logo */}
         <Link href="/" className="flex gap-2 items-center">
@@ -25,7 +25,7 @@ const Navbar = () => {
           />
         </div>
         {session ? (
-          <Button onClick={() => signOut()} variant="destructive">
+          <Button onClick={() => signOut()} variant="default">
             Sign Out
           </Button>
         ) : (

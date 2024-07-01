@@ -1,7 +1,10 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "target": "es2019", // Updated target for newer environments
+    "lib": [
+      "dom",
+      "esnext"
+    ], // Adjusted lib options
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -12,17 +15,28 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve",
+    "jsx": "preserve", // Updated for React 17+ JSX transform
     "incremental": true,
+    "sourceMap": true, // Enabled source maps
     "plugins": [
       {
         "name": "next"
       }
     ],
+    "baseUrl": ".", // Added baseUrl for path resolution
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": [
+        "./src/*"
+      ]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules"]
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }
