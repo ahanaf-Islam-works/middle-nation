@@ -2,9 +2,8 @@ import db from "@/db/db";
 import { userServerSession } from "@/lib/auth";
 
 export async function GET(request: Request) {
-  const page = new URL(request.url).searchParams.get("page");
-  const pageNumber = page ? parseInt(page) : 1;
-  console.log(pageNumber);
+  const page = new URL(request.url).searchParams.get("page") || "1";
+  const pageNumber = parseInt(page);
   const session = await userServerSession();
 
   if (!session) {

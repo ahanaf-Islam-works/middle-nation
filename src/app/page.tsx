@@ -1,46 +1,42 @@
 import Feed from "@/components/NewsFeed/Feed";
 import FeedHeader from "@/components/NewsFeed/FeedHeader";
 import Siberbar from "@/components/Sibebar/SiberbarVisitor";
-import { FileWarningIcon } from "lucide-react";
 
 const Home = async () => {
-  try {
-    const feedData = await fetch(
-      process.env.NEXTAUTH_URL + "/api/post" + "?page=" + 1
-    );
+  const feedData = await fetch(
+    process.env.NEXTAUTH_URL + "/api/post" + "?page=" + 1
+  );
 
-    const feedDataJson = (await feedData.json()) || {
-      error: "Error establishing connection",
-    };
+  const feedDataJson = (await feedData.json()) || {
+    error: "Error establishing connection",
+  };
 
-    if (!feedData.ok) {
-      return (
-        <div className="container mx-auto flex gap-3">
-          <FileWarningIcon size={64} />
-          <p> {feedDataJson.error}</p>
-        </div>
-      );
-    }
-
+  if (feedDataJson.error) {
     return (
-      <div className="container mx-auto flex gap-3">
-        <article className="w-3/5 bg-purple-400">
-          <FeedHeader />
-          <Feed feedData={feedDataJson} />
+      <div className="container mx-auto flex justify-start gap-3">
+        <article className="w-3/5 bg-slate-600 p-4 rounded-md">
+          <div className="container mx-auto flex justify-start">
+            <p className="text-red-500">Error establishing connection</p>
+          </div>
         </article>
         <aside className="w-2/5 flex justify-center items-center bg-pink-500">
           <Siberbar />
         </aside>
       </div>
     );
-  } catch (error) {
-    return (
-      <div className="container mx-auto flex gap-3">
-        <FileWarningIcon size={64} />
-        <p> Error establishing connection</p>
-      </div>
-    );
   }
+
+  return (
+    <div className="container mx-auto flex gap-3">
+      <article className="w-3/5">
+        <FeedHeader />
+        <Feed feedData={feedDataJson} />
+      </article>
+      <aside className="w-2/5 flex justify-center items-center">
+        <Siberbar />
+      </aside>
+    </div>
+  );
 };
 
 export default Home;
